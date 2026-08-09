@@ -1,16 +1,11 @@
+# Build output and release artifacts — reproducible from source, so they
+# are generated on demand rather than committed.
 /target
 dist/sovmr.AppDir/
 dist/tools/
 dist/*.AppImage
 dist/SHA256SUMS
-
-# Private keys and host-specific material: never in the repository.
-HFiles/
-
-# Internal governance documents: kept out of the tree entirely.
-MANIFEST.md
-MANIFEST2.md
-*.manifest.md
 dist/SHA256SUMS.asc
 dist/*.ots
+dist/*.ots.bak
 dist/commit.txt
