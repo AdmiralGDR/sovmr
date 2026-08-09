@@ -141,6 +141,15 @@ test-audio:
 ## exe — hence two invocations rather than one.
 WINDOWS_TARGET := x86_64-pc-windows-gnu
 WINDOWS_OUT := target/$(WINDOWS_TARGET)/release
+## mingw-w64's dlltool bakes the absolute build directory into the symbol
+## names of the import libraries it synthesizes for system DLLs
+## (`_head_<builddir>_..._dll_imports_lib`). Those symbols are
+## linker-internal and never needed at run time, but --remap-path-prefix
+## cannot touch them because they are symbol names, not source paths — so
+## the only way the shipped exe carries no build-machine path is to strip
+## it. This is why the Windows program is stripped where the Linux one is
+## not: on ELF the remap already covers everything.
+WINSTRIP := x86_64-w64-mingw32-strip
 
 ## The Windows test machine: an ssh alias, so the address lives in
 ## ~/.ssh/config rather than in this file.
@@ -158,9 +167,11 @@ WINWORK ?= C:/sovmr-ci
 
 windows:
 	$(CARGO) build --release --target $(WINDOWS_TARGET) -p sovmr-app
+	$(WINSTRIP) --strip-all $(WINDOWS_OUT)/sovmr.exe
 	SOVMR_PAYLOAD="$(CURDIR)/$(WINDOWS_OUT)/sovmr.exe" \
 	  $(CARGO) build --release --target $(WINDOWS_TARGET) -p sovmr-setup
-	@echo "windows build ready:"
+	$(WINSTRIP) --strip-all $(WINDOWS_OUT)/sovmr-setup.exe
+	@echo "windows build ready (stripped):"
 	@ls -lh $(WINDOWS_OUT)/sovmr.exe $(WINDOWS_OUT)/sovmr-setup.exe
 
 ## Everything compiles for Windows, including the layout asserts that

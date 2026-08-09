@@ -53,5 +53,6 @@ pub mod fft;
 pub mod flac;
 pub mod frame;
 pub mod mdct;
+pub mod opus;
 pub mod pcm;
 pub mod quant;

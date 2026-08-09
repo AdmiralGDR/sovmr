@@ -31,7 +31,7 @@ members = [
 # field until the project has a real public home — a placeholder URL is
 # worse than an absent one.
 [workspace.package]
-version = "2.0.0-rc.37"
+version = "2.0.0-rc.38"
 edition = "2021"
 rust-version = "1.87"
 license = "AGPL-3.0-or-later"

@@ -58,8 +58,7 @@ pub const TARGET: &str = env!("SOVMR_TARGET");
 ///
 /// One line to keep current, deliberately: a scheme that derived this
 /// from anything else would be more machinery than the fact is worth.
-pub const MILESTONE: &str =
-    "stage 6.13 of 7 — a maximum-effort preset, measured against the default";
+pub const MILESTONE: &str = "stage 6.14 of 7 — Opus range coder (RFC 6716), round-trip proven";
 
 /// Whether this build came from a tree with uncommitted changes.
 ///
