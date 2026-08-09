@@ -59,7 +59,7 @@ pub const TARGET: &str = env!("SOVMR_TARGET");
 /// One line to keep current, deliberately: a scheme that derived this
 /// from anything else would be more machinery than the fact is worth.
 pub const MILESTONE: &str =
-    "stage 6.10 of 7 — Matroska memory measured: a duplicated index removed, the rest packed";
+    "stage 6.11 of 7 — EN/RU interface, visible progress, and reproducible signed builds";
 
 /// Whether this build came from a tree with uncommitted changes.
 ///

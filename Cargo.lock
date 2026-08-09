@@ -2882,7 +2882,7 @@ dependencies = [
 
 [[package]]
 name = "sovmr-app"
-version = "2.0.0-rc.34"
+version = "2.0.0-rc.35"
 dependencies = [
  "sovmr-core",
  "sovmr-cuda",
@@ -2896,25 +2896,25 @@ dependencies = [
 
 [[package]]
 name = "sovmr-audio"
-version = "2.0.0-rc.34"
+version = "2.0.0-rc.35"
 dependencies = [
  "sovmr-mkv",
 ]
 
 [[package]]
 name = "sovmr-core"
-version = "2.0.0-rc.34"
+version = "2.0.0-rc.35"
 
 [[package]]
 name = "sovmr-cuda"
-version = "2.0.0-rc.34"
+version = "2.0.0-rc.35"
 dependencies = [
  "sovmr-os",
 ]
 
 [[package]]
 name = "sovmr-mkv"
-version = "2.0.0-rc.34"
+version = "2.0.0-rc.35"
 dependencies = [
  "sovmr-audio",
  "sovmr-mp4",
@@ -2922,11 +2922,11 @@ dependencies = [
 
 [[package]]
 name = "sovmr-mp4"
-version = "2.0.0-rc.34"
+version = "2.0.0-rc.35"
 
 [[package]]
 name = "sovmr-native"
-version = "2.0.0-rc.34"
+version = "2.0.0-rc.35"
 dependencies = [
  "sovmr-audio",
  "sovmr-core",
@@ -2940,7 +2940,7 @@ dependencies = [
 
 [[package]]
 name = "sovmr-nvdec"
-version = "2.0.0-rc.34"
+version = "2.0.0-rc.35"
 dependencies = [
  "sovmr-cuda",
  "sovmr-os",
@@ -2948,7 +2948,7 @@ dependencies = [
 
 [[package]]
 name = "sovmr-nvenc"
-version = "2.0.0-rc.34"
+version = "2.0.0-rc.35"
 dependencies = [
  "sovmr-cuda",
  "sovmr-os",
@@ -2956,15 +2956,15 @@ dependencies = [
 
 [[package]]
 name = "sovmr-os"
-version = "2.0.0-rc.34"
+version = "2.0.0-rc.35"
 
 [[package]]
 name = "sovmr-setup"
-version = "2.0.0-rc.34"
+version = "2.0.0-rc.35"
 
 [[package]]
 name = "sovmr-ui"
-version = "2.0.0-rc.34"
+version = "2.0.0-rc.35"
 dependencies = [
  "eframe",
  "sovmr-core",
