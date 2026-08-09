@@ -242,6 +242,8 @@ pub struct Strings {
     pub effort_balanced: &'static str,
     /// Preset: best quality.
     pub effort_quality: &'static str,
+    /// Preset: maximum (slowest).
+    pub effort_maximum: &'static str,
     /// Smart-skip checkbox label.
     pub smart_skip: &'static str,
     /// Smart-skip checkbox hover.
@@ -334,6 +336,7 @@ pub const EN: Strings = Strings {
     effort_fast: "Fast",
     effort_balanced: "Balanced",
     effort_quality: "Best quality (default)",
+    effort_maximum: "Maximum (slowest)",
     smart_skip: "Smart Skip — protect already compressed files",
     smart_skip_hover: "On: files already in the target codec at a low bitrate are \
                        marked \"already optimal\" instead of being re-encoded \
@@ -422,6 +425,7 @@ pub const RU: Strings = Strings {
     effort_fast: "Быстро",
     effort_balanced: "Сбалансированно",
     effort_quality: "Лучшее качество (по умолчанию)",
+    effort_maximum: "Максимум (самое медленное)",
     smart_skip: "Умный пропуск — беречь уже сжатые файлы",
     smart_skip_hover: "Вкл.: файлы, уже в целевом кодеке с низким битрейтом, \
                        помечаются «уже оптимально» вместо перекодирования \
@@ -557,6 +561,7 @@ mod tests {
                 s.effort_fast,
                 s.effort_balanced,
                 s.effort_quality,
+                s.effort_maximum,
                 s.smart_skip,
                 s.smart_skip_hover,
                 s.smart_skip_off,

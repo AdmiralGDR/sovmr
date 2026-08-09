@@ -123,6 +123,7 @@ fn effort_label(lang: Lang, e: Effort) -> &'static str {
         Effort::Speed => s.effort_fast,
         Effort::Balanced => s.effort_balanced,
         Effort::Quality => s.effort_quality,
+        Effort::Maximum => s.effort_maximum,
     }
 }
 
@@ -900,7 +901,12 @@ impl SovmrShell {
         egui::ComboBox::from_label(s.adv_preset)
             .selected_text(effort_label(lang, self.settings.effort))
             .show_ui(ui, |ui| {
-                for effort in [Effort::Speed, Effort::Balanced, Effort::Quality] {
+                for effort in [
+                    Effort::Speed,
+                    Effort::Balanced,
+                    Effort::Quality,
+                    Effort::Maximum,
+                ] {
                     ui.selectable_value(
                         &mut self.settings.effort,
                         effort,

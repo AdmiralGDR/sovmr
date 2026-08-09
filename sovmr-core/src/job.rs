@@ -67,8 +67,14 @@ pub enum Effort {
     Speed,
     /// Middle ground for time-pressed batches.
     Balanced,
-    /// Slowest, best quality-per-bit — the batch default.
+    /// Best quality-per-bit at a sensible speed (P6) — the batch default.
     Quality,
+    /// The slowest preset the hardware offers (P7). Kept apart from
+    /// [`Effort::Quality`] until a measurement says the extra time buys
+    /// anything: adopted only if `--verify` shows higher quality at no
+    /// larger a file. (`ULTRA_HIGH_QUALITY` tuning is deliberately not
+    /// reachable here — it segfaults the encode on driver 580.173.)
+    Maximum,
 }
 
 /// Validated constant-quality target (0–51, lower = higher fidelity).

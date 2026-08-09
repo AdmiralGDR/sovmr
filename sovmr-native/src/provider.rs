@@ -212,6 +212,7 @@ impl EncoderProvider for NvencNativeProvider {
                 Effort::Speed => EncodePreset::Speed,
                 Effort::Balanced => EncodePreset::Balanced,
                 Effort::Quality => EncodePreset::Quality,
+                Effort::Maximum => EncodePreset::Slowest,
             },
             references: sovmr_nvenc::encoder::ReferencePlan::default(),
         };

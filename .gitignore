@@ -11,3 +11,6 @@ HFiles/
 MANIFEST.md
 MANIFEST2.md
 *.manifest.md
+dist/SHA256SUMS.asc
+dist/*.ots
+dist/commit.txt
