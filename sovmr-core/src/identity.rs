@@ -59,7 +59,7 @@ pub const TARGET: &str = env!("SOVMR_TARGET");
 /// One line to keep current, deliberately: a scheme that derived this
 /// from anything else would be more machinery than the fact is worth.
 pub const MILESTONE: &str =
-    "stage 6.11 of 7 — EN/RU interface, visible progress, and reproducible signed builds";
+    "stage 6.12 of 7 — EN/RU interface, visible progress, path-stripped reproducible builds";
 
 /// Whether this build came from a tree with uncommitted changes.
 ///

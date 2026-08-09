@@ -2,6 +2,13 @@
 # sovmr — build & launch convenience. `make` (or `make run`) is all you need.
 
 CARGO      ?= cargo
+# Shipped binaries carry no build-machine paths. `file!()` panic
+# locations and dependency sources otherwise embed `$(HOME)/...`, which
+# leaks the build user's name and breaks reproducibility across machines.
+# These remaps rewrite them to fixed roots; they use make variables, so
+# the real path is never written into this file. Every cargo build under
+# make inherits them, so the artifact is identical wherever it is built.
+export RUSTFLAGS := --remap-path-prefix=$(HOME)=/home/build --remap-path-prefix=$(CURDIR)=/sovmr
 BIN        := target/release/sovmr
 PREFIX     ?= $(HOME)/.local
 BINDIR     := $(PREFIX)/bin
