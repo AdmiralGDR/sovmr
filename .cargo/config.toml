@@ -1,0 +1,22 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+#
+# Cross-compilation to Windows.
+#
+# The Rust toolchain ships the target's standard library but never a
+# linker, so one has to be named here.
+#
+# mingw-w64 GCC, not zig, and the reason is measured rather than
+# assumed. zig links the engine crates fine, but rustc's windows-gnu
+# target spec passes `-nodefaultlibs` and then demands the mingw-w64 GCC
+# runtime by name — `-lgcc_eh -lmingwex -lmingw32 -lgcc -lmsvcrt`. zig
+# does not provide that set, which is why `cargo-zigbuild` exists and
+# performs extensive flag surgery. Reproducing that surgery by hand
+# would be fragile against every rustc and zig release, for no gain over
+# the toolchain the target was designed around.
+#
+# Note what is NOT needed: import libraries for the NVIDIA stack. sovmr
+# resolves nvcuda/nvcuvid/nvEncodeAPI64 at runtime through its own
+# loader, so the usual reason windows-gnu cross builds fail does not
+# apply to the engine at all.
+[target.x86_64-pc-windows-gnu]
+linker = "x86_64-w64-mingw32-gcc"

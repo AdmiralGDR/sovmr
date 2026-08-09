@@ -1,0 +1,19 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+[package]
+name = "sovmr-setup"
+description = "Sovereign Windows installer: one self-contained executable that installs, upgrades and removes sovmr"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+keywords.workspace = true
+categories.workspace = true
+
+# No dependencies, by design. WiX/NSIS/Inno would each drag an external
+# toolchain into the build chain; the Win32 API is already there.
+[dependencies]
+
+[[bin]]
+name = "sovmr-setup"
+path = "src/main.rs"

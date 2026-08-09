@@ -1,0 +1,23 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+[package]
+name = "sovmr-native"
+description = "The zero-copy sovereign engine: demux -> NVDEC -> VRAM -> NVENC -> fast-start MP4, wrapped as an EncoderProvider"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+keywords.workspace = true
+categories.workspace = true
+
+# The integration crate: the only place where demuxer, decoder and
+# encoder meet. Still zero third-party dependencies.
+[dependencies]
+sovmr-audio.workspace = true
+sovmr-core.workspace = true
+sovmr-cuda.workspace = true
+sovmr-mkv.workspace = true
+sovmr-mp4.workspace = true
+sovmr-nvdec.workspace = true
+sovmr-nvenc.workspace = true
+sovmr-os.workspace = true

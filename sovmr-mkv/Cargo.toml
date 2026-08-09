@@ -1,0 +1,20 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+[package]
+name = "sovmr-mkv"
+description = "Sovereign Matroska: EBML reader and demuxer, zero dependencies"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+keywords.workspace = true
+categories.workspace = true
+
+[dependencies]
+sovmr-mp4.workspace = true
+
+[dev-dependencies]
+# The gate below mixes real AAC frames, because ffprobe reads the audio
+# as well as the marks and a made-up payload makes it complain about
+# something this test is not about.
+sovmr-audio = { path = "../sovmr-audio" }

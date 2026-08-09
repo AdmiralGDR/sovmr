@@ -1,0 +1,23 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Template: `make install` / `make package` replace @BINDIR@ and copy this
+# into ~/.local/share/applications/ (or the AppDir root).
+[Desktop Entry]
+Type=Application
+Name=sovmr
+GenericName=Media Compressor
+Comment=Visually lossless GPU batch compression (NVENC AV1/HEVC)
+Exec=@BINDIR@/sovmr %F
+Icon=sovmr
+Terminal=false
+Categories=AudioVideo;Video;
+MimeType=video/mp4;video/x-matroska;video/webm;video/quicktime;video/x-msvideo;video/mpeg;video/mp2t;
+Keywords=video;compress;encode;av1;hevc;nvenc;batch;
+StartupNotify=true
+Actions=Compress;
+
+# Right-click context action: select MP4s in COSMIC Files/Nautilus,
+# "Open With sovmr" or the Compress action, and they land in the queue
+# via CLI arguments (%F expands to the selected paths).
+[Desktop Action Compress]
+Name=Compress with sovmr
+Exec=@BINDIR@/sovmr %F

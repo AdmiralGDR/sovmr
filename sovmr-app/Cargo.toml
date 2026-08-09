@@ -1,0 +1,27 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+[package]
+name = "sovmr-app"
+description = "Desktop binary gluing core + the sovereign native engine + ui shell together"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+keywords.workspace = true
+categories.workspace = true
+
+# The only crate that knows every piece. Composition happens here and
+# nowhere else.
+[dependencies]
+sovmr-core.workspace = true
+sovmr-os.workspace = true
+sovmr-cuda.workspace = true
+sovmr-mp4.workspace = true
+sovmr-native.workspace = true
+sovmr-nvdec.workspace = true
+sovmr-nvenc.workspace = true
+sovmr-ui.workspace = true
+
+[[bin]]
+name = "sovmr"
+path = "src/main.rs"

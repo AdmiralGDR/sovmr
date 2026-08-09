@@ -1,0 +1,16 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+[package]
+name = "sovmr-core"
+description = "Engine-agnostic heart of sovmr: job model, batch queue, hardware planning, encoder facade"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+keywords.workspace = true
+categories.workspace = true
+
+# Sovereign by construction: standard library only, forever. Backends and
+# GUIs live in sibling crates; this one must stay embeddable anywhere a
+# Rust std target exists (desktop app today, headless web-service tomorrow).
+[dependencies]

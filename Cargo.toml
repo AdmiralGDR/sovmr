@@ -1,0 +1,59 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+#
+# sovmr workspace — sovereign media re-encoder.
+#
+# Crate graph (dependencies point right-to-left; ui and the engine never
+# touch each other, only sovmr-app knows every piece):
+#
+#   sovmr-core  <──  sovmr-native  <──  sovmr-{mp4,nvdec,nvenc,cuda,dl}
+#       ▲                 ▲
+#   sovmr-ui   <──────  sovmr-app
+#
+[workspace]
+resolver = "2"
+members = [
+    "sovmr-app",
+    "sovmr-audio",
+    "sovmr-core",
+    "sovmr-cuda",
+    "sovmr-mkv",
+    "sovmr-mp4",
+    "sovmr-native",
+    "sovmr-nvdec",
+    "sovmr-nvenc",
+    "sovmr-os",
+    "sovmr-setup",
+    "sovmr-ui",
+]
+
+# Shared metadata: every member inherits these, so publishing to a
+# sovereign registry needs no per-crate boilerplate. No `repository`
+# field until the project has a real public home — a placeholder URL is
+# worse than an absent one.
+[workspace.package]
+version = "2.0.0-rc.34"
+edition = "2021"
+rust-version = "1.87"
+license = "AGPL-3.0-or-later"
+authors = ["sovmr contributors"]
+keywords = ["video", "av1", "hevc", "nvenc", "transcoding"]
+categories = ["multimedia::video", "hardware-support"]
+
+[workspace.dependencies]
+sovmr-audio = { path = "sovmr-audio" }
+sovmr-core = { path = "sovmr-core" }
+sovmr-cuda = { path = "sovmr-cuda" }
+sovmr-mkv = { path = "sovmr-mkv" }
+sovmr-mp4 = { path = "sovmr-mp4" }
+sovmr-native = { path = "sovmr-native" }
+sovmr-nvdec = { path = "sovmr-nvdec" }
+sovmr-nvenc = { path = "sovmr-nvenc" }
+sovmr-os = { path = "sovmr-os" }
+sovmr-ui = { path = "sovmr-ui" }
+
+# Sovereign packaging: one fully optimized codegen unit, cross-crate LTO.
+# Symbols are stripped by `make package` (kept here for `make run`
+# backtraces during development).
+[profile.release]
+lto = "fat"
+codegen-units = 1

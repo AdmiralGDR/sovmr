@@ -1,0 +1,15 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+[package]
+name = "sovmr-os"
+description = "The sovereign platform boundary: every syscall the project makes lives here and nowhere else"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+keywords.workspace = true
+categories.workspace = true
+
+# Deliberately dependency-free, including on sovmr's own crates: this is
+# the outermost layer, and nothing above it may leak inwards.
+[dependencies]

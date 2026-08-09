@@ -1,0 +1,17 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+[package]
+name = "sovmr-nvdec"
+description = "Sovereign NVDEC bridge (dlopen libnvcuvid.so.1): hardware video decoding straight into VRAM for the zero-copy pipeline"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+keywords.workspace = true
+categories.workspace = true
+
+# Only sibling sovereign crates. cuvid* functions return CUresult, so the
+# symbolic error names come from sovmr-cuda (shared namespace, DRY).
+[dependencies]
+sovmr-cuda.workspace = true
+sovmr-os.workspace = true

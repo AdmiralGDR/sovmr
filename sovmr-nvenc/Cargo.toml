@@ -1,0 +1,19 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+[package]
+name = "sovmr-nvenc"
+description = "Sovereign NVENC bridge (dlopen libnvidia-encode.so.1): sessions, AV1/HEVC encode, VRAM resource registration, bitstream locking — zero crates"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+keywords.workspace = true
+categories.workspace = true
+
+# Only sibling sovereign crates — no `libc`, no bindings crates. The
+# NVENC entry points come from the driver library that is guaranteed
+# present wherever an RTX GPU is; sessions are hosted on sovmr-cuda
+# contexts.
+[dependencies]
+sovmr-cuda.workspace = true
+sovmr-os.workspace = true

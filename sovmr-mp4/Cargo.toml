@@ -1,0 +1,15 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+[package]
+name = "sovmr-mp4"
+description = "Strict zero-copy ISOBMFF toolkit: box parser, A/V demuxer with full timing, HEVC bitstream facts, and a fast-start AV1/HEVC muxer"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+keywords.workspace = true
+categories.workspace = true
+
+# Pure std, pure slices: no I/O, no allocation in the parsing hot path,
+# no dependencies at all.
+[dependencies]

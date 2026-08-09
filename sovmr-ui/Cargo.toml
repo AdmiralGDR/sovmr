@@ -1,0 +1,19 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+[package]
+name = "sovmr-ui"
+description = "Reusable egui dashboard shell: renders engine state, dispatches commands, knows nothing about the encoder behind the facade"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+keywords.workspace = true
+categories.workspace = true
+
+# The ONE sanctioned third-party exception in the whole workspace
+# (project brief: GPU-accelerated immediate-mode GUI). It is quarantined
+# here: no other sovmr crate may depend on egui/eframe.
+[dependencies]
+eframe = "0.35.0"
+sovmr-core.workspace = true
+sovmr-os.workspace = true
