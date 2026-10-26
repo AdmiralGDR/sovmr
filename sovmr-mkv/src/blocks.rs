@@ -245,7 +245,7 @@ fn split_frames<'a>(body: &'a [u8], lacing: u8, out: &mut Vec<&'a [u8]>) -> Resu
     let mut sizes = [0usize; MAX_FRAMES_PER_BLOCK];
     let mut at = 0usize;
     let mut previous = 0i64;
-    for size in sizes.iter_mut().take(count - 1) {
+    for (index, size) in sizes.iter_mut().take(count - 1).enumerate() {
         let n = match lacing {
             LACING_XIPH => {
                 // 255s accumulate; the first octet below 255 ends the
@@ -261,7 +261,10 @@ fn split_frames<'a>(body: &'a [u8], lacing: u8, out: &mut Vec<&'a [u8]>) -> Resu
                 }
             }
             LACING_EBML => {
-                let signed = previous != 0;
+                // Only the first entry is unsigned. Keying this off the
+                // running size instead would misread every entry after
+                // a zero-length frame.
+                let signed = index > 0;
                 let (v, len) = lace_vint(rest.get(at..).ok_or(BlockError::BadLacing)?, signed)?;
                 at += len;
                 // The first entry is the size itself; each later one is
@@ -517,6 +520,27 @@ mod tests {
         assert_eq!(frames[0].data, b"aaaaa");
         assert_eq!(frames[1].data, b"bbb", "5 + (-2) = 3");
         assert_eq!(frames[2].data, b"cccc", "the remainder");
+    }
+
+    #[test]
+    fn ebml_lacing_after_a_zero_length_frame_is_still_signed() {
+        // Sizes 0, 2, 3: the second entry is a difference of +2, stored
+        // as 63 + 2 = 65. Read as unsigned it would be 65 bytes and the
+        // block would be refused.
+        let mut b = header(1, 0, LACING_EBML);
+        b.push(2); // three frames
+        b.push(0x80); // first size: 0
+        b.push(0x80 | 65); // +2 -> 2
+        b.extend_from_slice(b"bb");
+        b.extend_from_slice(b"ccc");
+        let seg = cluster(0, &[el(&[0xA3], &b)]);
+
+        let (frames, err) = read_frames(&seg);
+        assert_eq!(err, None);
+        assert_eq!(frames.len(), 3);
+        assert_eq!(frames[0].data, b"");
+        assert_eq!(frames[1].data, b"bb");
+        assert_eq!(frames[2].data, b"ccc");
     }
 
     #[test]
