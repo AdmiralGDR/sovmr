@@ -357,18 +357,7 @@ impl Mp4Muxer {
         keyframe: bool,
         cts: u64,
     ) -> io::Result<()> {
-        // A sample's size lives in a 32-bit `stsz` entry; a larger one
-        // used to be truncated silently by an `as u32` cast, writing a
-        // file whose sample table no longer matched its payload.
-        let size = u32::try_from(data.len()).map_err(|_| {
-            io::Error::new(
-                io::ErrorKind::InvalidInput,
-                format!(
-                    "sample of {} bytes does not fit stsz (max 4 GiB - 1)",
-                    data.len()
-                ),
-            )
-        })?;
+        let size = stsz_entry(data.len())?;
         // The spool is only taken by `finalize` (which consumes the
         // muxer) and `Drop`, so this is unreachable through the public
         // API today; it is an error rather than a panic so that a future
@@ -1237,6 +1226,40 @@ pub fn build_mp4a_entry(
         .copy_from_slice(&(sample_rate << 16).to_be_bytes());
     entry.extend_from_slice(&esds);
     entry
+}
+
+/// A sample's size lives in a 32-bit `stsz` entry. A larger sample used to be
+/// truncated silently by an `as u32` cast, writing a file whose sample table no
+/// longer matched its payload; it is now refused.
+fn stsz_entry(len: usize) -> io::Result<u32> {
+    u32::try_from(len).map_err(|_| {
+        io::Error::new(
+            io::ErrorKind::InvalidInput,
+            format!("sample of {len} bytes does not fit stsz (max 4 GiB - 1)"),
+        )
+    })
+}
+
+#[cfg(test)]
+mod stsz_tests {
+    use super::stsz_entry;
+
+    #[test]
+    fn sizes_up_to_u32_max_are_kept_exactly() {
+        assert_eq!(stsz_entry(0).ok(), Some(0));
+        assert_eq!(stsz_entry(1_500).ok(), Some(1_500));
+        assert_eq!(stsz_entry(u32::MAX as usize).ok(), Some(u32::MAX));
+    }
+
+    #[cfg(target_pointer_width = "64")]
+    #[test]
+    fn a_sample_over_four_gibibytes_is_refused_not_truncated() {
+        let err = stsz_entry(u32::MAX as usize + 1).err();
+        assert_eq!(
+            err.as_ref().map(std::io::Error::kind),
+            Some(std::io::ErrorKind::InvalidInput)
+        );
+    }
 }
 
 #[cfg(test)]
