@@ -357,10 +357,26 @@ impl Mp4Muxer {
         keyframe: bool,
         cts: u64,
     ) -> io::Result<()> {
+        // A sample's size lives in a 32-bit `stsz` entry; a larger one
+        // used to be truncated silently by an `as u32` cast, writing a
+        // file whose sample table no longer matched its payload.
+        let size = u32::try_from(data.len()).map_err(|_| {
+            io::Error::new(
+                io::ErrorKind::InvalidInput,
+                format!(
+                    "sample of {} bytes does not fit stsz (max 4 GiB - 1)",
+                    data.len()
+                ),
+            )
+        })?;
+        // The spool is only taken by `finalize` (which consumes the
+        // muxer) and `Drop`, so this is unreachable through the public
+        // API today; it is an error rather than a panic so that a future
+        // refactor cannot turn it into a mid-encode abort.
         let writer = self
             .spool
             .as_mut()
-            .expect("muxer used after finalize/abort");
+            .ok_or_else(|| io::Error::other("muxer used after finalize/abort"))?;
         writer.write_all(data)?;
         // Chunk bookkeeping: a run of same-track samples is one chunk.
         match self.chunks.last_mut() {
@@ -372,7 +388,7 @@ impl Mp4Muxer {
             }),
         }
         let meta = SampleMeta {
-            size: data.len() as u32,
+            size,
             duration,
             keyframe,
             cts,
@@ -462,7 +478,10 @@ impl Mp4Muxer {
         })?;
         let video_entry = self.video_sample_entry(&config)?;
         let ctts_plan = self.video_ctts()?;
-        let mut spool_writer = self.spool.take().expect("finalize once");
+        let mut spool_writer = self
+            .spool
+            .take()
+            .ok_or_else(|| io::Error::other("muxer spool already closed"))?;
         spool_writer.flush()?;
         drop(spool_writer);
 
