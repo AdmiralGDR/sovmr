@@ -1,0 +1,74 @@
+name: ci
+
+# Mirrors `make verify` plus the ffmpeg-only gates. GPU gates (`#[ignore]`
+# with "requires NVIDIA ...") stay local: hosted runners have no GPU, and the
+# CUDA/NVDEC/NVENC crates load the driver with dlopen at run time, so they
+# build and unit-test fine without one.
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+  RUSTFLAGS: -D warnings
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo fmt --all --check
+      # undocumented_unsafe_blocks keeps every `unsafe` paired with a
+      # SAFETY comment.
+      - run: cargo clippy --workspace --all-targets --locked -- -D warnings -W clippy::undocumented_unsafe_blocks
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo test --workspace --locked
+
+  msrv:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.92
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo check --workspace --all-targets --locked
+
+  windows-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-pc-windows-gnu
+          components: clippy
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo clippy --workspace --all-targets --locked --target x86_64-pc-windows-gnu -- -D warnings -W clippy::undocumented_unsafe_blocks
+
+  ffmpeg-gates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - run: sudo apt-get update && sudo apt-get install -y --no-install-recommends ffmpeg
+      # Same as `make test-mkv` plus the bit-exact half of `make test-audio`
+      # (the oracle tests query ffmpeg thousands of times and are left local).
+      - run: cargo test --locked -p sovmr-mkv --test real_file -- --ignored
+      - run: cargo test --locked -p sovmr-mkv --test write_read -- --ignored
+      - run: cargo test --locked -p sovmr-audio --test bit_exact -- --ignored
