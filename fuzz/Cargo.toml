@@ -1,0 +1,51 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+[package]
+name = "sovmr-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2021"
+license = "AGPL-3.0-or-later"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+sovmr-mkv = { path = "../sovmr-mkv" }
+sovmr-mp4 = { path = "../sovmr-mp4" }
+
+# Kept out of the main workspace so a plain `cargo build` never needs
+# nightly or libFuzzer.
+[workspace]
+members = ["."]
+
+[profile.release]
+debug = 1
+
+[[bin]]
+name = "mkv_demux"
+path = "fuzz_targets/mkv_demux.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "mp4_demux"
+path = "fuzz_targets/mp4_demux.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "ebml_walk"
+path = "fuzz_targets/ebml_walk.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "hevc_bitstream"
+path = "fuzz_targets/hevc_bitstream.rs"
+test = false
+doc = false
+bench = false
