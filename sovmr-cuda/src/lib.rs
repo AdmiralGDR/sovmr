@@ -163,55 +163,89 @@ impl Cuda {
     pub fn load() -> Result<Self, CudaError> {
         let lib = Library::open_first(&CUDA_LIB).map_err(CudaError::DriverMissing)?;
 
-        // SAFETY (all transmutes below): symbols verified present via
-        // dlsym; signatures follow the public cuda.h driver API contract.
+        // Every transmute below relies on the same three invariants:
+        //  1. `Library::symbol` only returns `Ok` for a non-null address
+        //     (a null from dlsym/GetProcAddress becomes `Err`, propagated
+        //     with `?` before the transmute runs), so no null fn pointer
+        //     can be produced;
+        //  2. `*mut c_void` and an `extern "C" fn` pointer have the same
+        //     size and representation on every target we build for
+        //     (Linux/Windows x86_64), which `transmute` checks for size;
+        //  3. the resolved address stays mapped for as long as `lib`
+        //     does, and `lib` is moved into `Cuda::_lib`, so every stored
+        //     fn pointer is only callable while its library is loaded.
+        // What each comment adds is the C prototype from `cuda.h` that
+        // the Rust alias must match exactly (CUresult = i32,
+        // CUdevice = c_int, CUdeviceptr = u64 on 64-bit targets).
+        //
+        // SAFETY: invariants 1-3; `CUresult cuInit(unsigned int Flags)`
+        // matches `CuInitFn`.
         let init: CuInitFn = unsafe {
             std::mem::transmute::<*mut c_void, CuInitFn>(
                 lib.symbol("cuInit").map_err(CudaError::SymbolMissing)?,
             )
         };
+        // SAFETY: invariants 1-3 above; `CUresult cuDeviceGet(CUdevice*, int ordinal)`
+        // matches `CuDeviceGetFn`.
         let device_get: CuDeviceGetFn = unsafe {
             std::mem::transmute::<*mut c_void, CuDeviceGetFn>(
                 lib.symbol("cuDeviceGet")
                     .map_err(CudaError::SymbolMissing)?,
             )
         };
+        // SAFETY: invariants 1-3 above; `CUresult cuCtxCreate_v2(CUcontext*, unsigned int
+        // flags, CUdevice)` matches `CuCtxCreateFn` (CUcontext is an opaque
+        // pointer).
         let ctx_create: CuCtxCreateFn = unsafe {
             std::mem::transmute::<*mut c_void, CuCtxCreateFn>(
                 lib.symbol("cuCtxCreate_v2")
                     .map_err(CudaError::SymbolMissing)?,
             )
         };
+        // SAFETY: invariants 1-3 above; `CUresult cuCtxDestroy_v2(CUcontext)` matches
+        // `CuCtxDestroyFn`.
         let ctx_destroy: CuCtxDestroyFn = unsafe {
             std::mem::transmute::<*mut c_void, CuCtxDestroyFn>(
                 lib.symbol("cuCtxDestroy_v2")
                     .map_err(CudaError::SymbolMissing)?,
             )
         };
+        // SAFETY: invariants 1-3 above; `CUresult cuMemAllocPitch_v2(CUdeviceptr*, size_t*
+        // pitch, size_t width_bytes, size_t height, unsigned int
+        // element_size)` matches `CuMemAllocPitchFn` (the `_v2` symbol is
+        // the one with 64-bit CUdeviceptr / size_t arguments).
         let mem_alloc_pitch: CuMemAllocPitchFn = unsafe {
             std::mem::transmute::<*mut c_void, CuMemAllocPitchFn>(
                 lib.symbol("cuMemAllocPitch_v2")
                     .map_err(CudaError::SymbolMissing)?,
             )
         };
+        // SAFETY: invariants 1-3 above; `CUresult cuMemAlloc_v2(CUdeviceptr*, size_t)` matches
+        // `CuMemAllocFn`.
         let mem_alloc: CuMemAllocFn = unsafe {
             std::mem::transmute::<*mut c_void, CuMemAllocFn>(
                 lib.symbol("cuMemAlloc_v2")
                     .map_err(CudaError::SymbolMissing)?,
             )
         };
+        // SAFETY: invariants 1-3 above; `CUresult cuMemcpyDtoD_v2(CUdeviceptr dst,
+        // CUdeviceptr src, size_t bytes)` matches `CuMemcpyDtoDFn`.
         let memcpy_dtod: CuMemcpyDtoDFn = unsafe {
             std::mem::transmute::<*mut c_void, CuMemcpyDtoDFn>(
                 lib.symbol("cuMemcpyDtoD_v2")
                     .map_err(CudaError::SymbolMissing)?,
             )
         };
+        // SAFETY: invariants 1-3 above; `CUresult cuMemcpyDtoH_v2(void* dst, CUdeviceptr src,
+        // size_t bytes)` matches `CuMemcpyDtoHFn`.
         let memcpy_dtoh: CuMemcpyDtoHFn = unsafe {
             std::mem::transmute::<*mut c_void, CuMemcpyDtoHFn>(
                 lib.symbol("cuMemcpyDtoH_v2")
                     .map_err(CudaError::SymbolMissing)?,
             )
         };
+        // SAFETY: invariants 1-3 above; `CUresult cuMemFree_v2(CUdeviceptr)` matches
+        // `CuMemFreeFn`.
         let mem_free: CuMemFreeFn = unsafe {
             std::mem::transmute::<*mut c_void, CuMemFreeFn>(
                 lib.symbol("cuMemFree_v2")
@@ -222,6 +256,10 @@ impl Cuda {
         let get_error_name: Option<CuGetErrorNameFn> = lib
             .symbol("cuGetErrorName")
             .ok()
+            // SAFETY: invariants 1-3 above (`ok()` discards the error, so
+            // `ptr` is a non-null resolved address); `CUresult
+            // cuGetErrorName(CUresult, const char**)` matches
+            // `CuGetErrorNameFn`.
             .map(|ptr| unsafe { std::mem::transmute::<*mut c_void, CuGetErrorNameFn>(ptr) });
 
         let cuda = Cuda {
@@ -553,6 +591,9 @@ mod tests {
         // definite bytes, and that reading twice agrees.
         let mut first = vec![0xAAu8; written.len()];
         let mut second = vec![0x55u8; written.len()];
+        // SAFETY: `staging` is a live linear allocation of exactly
+        // `written.len()` bytes in `ctx`, and both host buffers are that
+        // long, so each copy reads only inside the allocation.
         unsafe {
             ctx.copy_to_host(&mut first, staging.device_ptr())
                 .expect("device to host");
@@ -573,6 +614,9 @@ mod tests {
         // the same buffer to itself is a no-op the driver must accept,
         // after which the contents must still agree.
         let mut third = vec![0u8; written.len()];
+        // SAFETY: src and dst are the same live `written.len()`-byte
+        // allocation in `ctx` (a full self-copy stays in bounds), and
+        // `third` is exactly that long for the read-back.
         unsafe {
             ctx.copy_device(staging.device_ptr(), staging.device_ptr(), written.len())
                 .expect("device to device");

@@ -283,8 +283,16 @@ impl NvDec {
         for (slot, name) in REQUIRED_SYMBOLS.iter().enumerate() {
             resolved[slot] = lib.symbol(name).map_err(NvdecError::SymbolMissing)?;
         }
-        // SAFETY (all transmutes): every pointer verified non-null via
-        // dlsym above; signatures follow the public cuviddec.h contract.
+        // SAFETY: (a) every `resolved[i]` came from `Library::symbol`,
+        // which turns a null address into `Err` (propagated by `?`), so
+        // no null fn pointer is created; (b) slot `i` holds
+        // `REQUIRED_SYMBOLS[i]`, and the target type of each transmute is
+        // the Rust alias of that entry point's prototype in
+        // cuviddec.h / nvcuvid.h (order checked against the array above);
+        // (c) a data pointer and an `extern "C" fn` pointer have the same
+        // size on supported targets (enforced by `transmute`); (d) `lib`
+        // is moved into `_lib`, so the code stays mapped for as long as
+        // these pointers are reachable.
         unsafe {
             Ok(NvDec {
                 create_decoder: std::mem::transmute::<*mut c_void, CreateDecoderFn>(resolved[0]),
@@ -465,6 +473,10 @@ impl Decoder<'_> {
     pub fn map_frame(&self, picture_index: i32) -> Result<MappedFrame<'_>, NvdecError> {
         let mut device_ptr: u64 = 0;
         let mut pitch: c_uint = 0;
+        // SAFETY: `ProcParams` is `#[repr(C)]` and made only of integers
+        // and raw pointers, for which the all-zero bit pattern is valid
+        // (null pointers are what CUVIDPROCPARAMS expects for unused
+        // fields).
         let mut proc_params: Box<ProcParams> = unsafe { Box::new(std::mem::zeroed()) };
         proc_params.progressive_frame = 1;
         // SAFETY: valid out-pointers; proc params fully initialized; the

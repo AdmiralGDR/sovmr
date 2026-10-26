@@ -129,6 +129,9 @@ extern "C" fn on_termination_signal(signum: i32) {
     if TERMINATION_REQUESTED.swap(true, Ordering::SeqCst) {
         // Second Ctrl+C / SIGTERM: the user insists. Graceful teardown
         // is already running or wedged — leave immediately.
+        // SAFETY: `_exit` is async-signal-safe (POSIX.1-2008 list), takes
+        // a plain int, and never returns, so calling it from a signal
+        // handler cannot observe or corrupt interrupted state.
         unsafe { _exit(SIGNAL_EXIT_BASE + signum) }
     }
 }

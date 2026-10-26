@@ -174,6 +174,9 @@ unsafe extern "C" fn sequence_trampoline(user: *mut c_void, fmt: *mut VideoForma
         // alive for its whole lifetime; `fmt` is driver-owned and valid
         // for the duration of the callback.
         let cbs = unsafe { &mut *user.cast::<ParserCallbacks<'_>>() };
+        // SAFETY: the driver passes a non-null CUVIDEOFORMAT* valid for
+        // the duration of this callback; `VideoFormat` mirrors its
+        // layout (size verified by the C probe) and we only read it.
         let fmt = unsafe { &*fmt };
         (cbs.on_sequence)(fmt)
     }));
@@ -197,6 +200,9 @@ unsafe extern "C" fn display_trampoline(user: *mut c_void, info: *mut DisplayInf
     let result = catch_unwind(AssertUnwindSafe(|| {
         // SAFETY: as in sequence_trampoline.
         let cbs = unsafe { &mut *user.cast::<ParserCallbacks<'_>>() };
+        // SAFETY: the driver passes a non-null CUVIDPARSERDISPINFO* valid
+        // for the duration of this callback; `DisplayInfo` mirrors its
+        // layout and we only read it.
         let info = unsafe { &*info };
         (cbs.on_display)(info)
     }));
@@ -382,6 +388,8 @@ mod tests {
             on_display: Box::new(|_| true),
         };
         let user = (&mut cbs as *mut ParserCallbacks<'_>).cast::<c_void>();
+        // SAFETY: `VideoFormat` is `#[repr(C)]` plain integers and
+        // integer arrays; all-zero is a valid value.
         let mut fmt: VideoFormat = unsafe { std::mem::zeroed() };
         // SAFETY: exercising the trampoline exactly as the driver would.
         let rc = unsafe { sequence_trampoline(user, &mut fmt) };

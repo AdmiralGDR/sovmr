@@ -1026,6 +1026,10 @@ impl NvEncSession<'_> {
         config.preset.preset_cfg.rc_params.target_quality = target_quality;
         let _ = config.codec;
 
+        // SAFETY: `ReconfigureParams` is `#[repr(C)]` and (through
+        // `InitializeParams`) contains only integers, `Guid`s, arrays of
+        // those and raw pointers; all-zero is a valid value for each, and
+        // the version tag is set on the next line before any driver call.
         let mut params: Box<ReconfigureParams> = unsafe { Box::new(std::mem::zeroed()) };
         params.version = RECONFIGURE_PARAMS_VER;
         // A byte copy: the structure is plain data plus pointers that

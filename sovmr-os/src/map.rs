@@ -144,6 +144,9 @@ pub struct MappedFile {
 // and no thread affinity. Handing the bytes to another thread is exactly
 // as safe as handing over a `&[u8]`.
 unsafe impl Send for MappedFile {}
+// SAFETY: shared access only ever yields `&[u8]` into a read-only
+// (PROT_READ, MAP_PRIVATE) mapping that is unmapped solely by `Drop`,
+// which needs ownership; concurrent reads of immutable bytes are sound.
 unsafe impl Sync for MappedFile {}
 
 impl MappedFile {

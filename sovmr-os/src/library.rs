@@ -114,8 +114,16 @@ pub struct Library {
 }
 
 // SAFETY: the loader handle is process-global state; glibc's dl* API is
-// thread-safe. Nothing here is tied to the opening thread.
+// thread-safe (and so are LoadLibrary/GetProcAddress/FreeLibrary).
+// Nothing here is tied to the opening thread, so moving a `Library` to
+// another thread (and closing it there on drop) is sound.
 unsafe impl Send for Library {}
+// SAFETY: `&Library` only exposes `symbol()`, which calls dlsym /
+// GetProcAddress on a handle that cannot be closed while the shared
+// borrow exists (closing needs `Drop`, i.e. ownership). Both lookups are
+// thread-safe and do not mutate the handle, so concurrent `symbol()`
+// calls from several threads are sound. `dlerror` state read on failure
+// is thread-local per POSIX.
 unsafe impl Sync for Library {}
 
 impl std::fmt::Debug for Library {
@@ -207,10 +215,14 @@ impl Library {
         // narrow string even in a UTF-16 API, because export tables are
         // narrow.
         //
-        // SAFETY: handle is valid (non-null, not yet closed); c_symbol is
-        // a valid NUL-terminated string.
+        // SAFETY: `self.handle` is non-null (checked in `open`) and not
+        // yet closed (only `Drop` closes it, which cannot run while
+        // `&self` is borrowed); `c_symbol` is a valid NUL-terminated
+        // string that outlives the call.
         #[cfg(unix)]
         let ptr = unsafe { dlsym(self.handle, c_symbol.as_ptr()) };
+        // SAFETY: same invariants as the unix branch, for an HMODULE
+        // returned by a successful `LoadLibraryExW`.
         #[cfg(windows)]
         let ptr = unsafe { GetProcAddress(self.handle, c_symbol.as_ptr()) };
         if ptr.is_null() {
@@ -229,11 +241,17 @@ impl Library {
 
 impl Drop for Library {
     fn drop(&mut self) {
-        // SAFETY: handle came from a successful open and is released once.
+        // SAFETY: handle came from a successful `dlopen` (non-null) and
+        // `drop` runs at most once, so it is released exactly once. Fn
+        // pointers resolved from it are stored next to the `Library` in
+        // their owning struct and die with it, so none is called after
+        // this point.
         #[cfg(unix)]
         unsafe {
             dlclose(self.handle);
         }
+        // SAFETY: as above, for an HMODULE from a successful
+        // `LoadLibraryExW`.
         #[cfg(windows)]
         unsafe {
             FreeLibrary(self.handle);
