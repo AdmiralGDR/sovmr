@@ -1189,3 +1189,68 @@ fn a_text_track_nobody_references_is_still_a_subtitle_track() {
     let file = mp4_with_extra_moov_boxes(&[orphan]);
     assert_eq!(survey_extras(&file).unwrap().subtitles, 1);
 }
+
+// ---- hostile input: mutated / truncated files must never panic ----
+
+/// Tiny deterministic PRNG (xorshift64*), so the test needs no crate.
+struct Rng(u64);
+impl Rng {
+    fn next(&mut self) -> u64 {
+        self.0 ^= self.0 >> 12;
+        self.0 ^= self.0 << 25;
+        self.0 ^= self.0 >> 27;
+        self.0.wrapping_mul(0x2545_F491_4F6C_DD1D)
+    }
+    fn below(&mut self, n: usize) -> usize {
+        (self.next() % n.max(1) as u64) as usize
+    }
+}
+
+fn exercise_mp4(file: &[u8]) {
+    for b in boxes(file).flatten() {
+        let _ = b.children().count();
+    }
+    let _ = find_path(file, &[*b"moov", *b"trak", *b"mdia", *b"minf", *b"stbl"]);
+    if let Ok(track) = sovmr_mp4::demux::find_video_track(file) {
+        let _ = track.sample_count();
+        let _ = track.duration();
+        let _ = track.frame_rate();
+        let _ = track.parameter_sets().count();
+        let mut out = Vec::new();
+        for sample in track.samples(file).take(64).flatten() {
+            let _ = track.write_frame(&sample, &mut out);
+        }
+    }
+    let _ = sovmr_mp4::demux::survey_extras(file);
+    if let Ok(audio) = sovmr_mp4::demux::find_audio_tracks(file) {
+        for t in &audio.tracks {
+            let _ = t.samples(file).take(64).count();
+        }
+    }
+    let _ = sovmr_mp4::hevc::extract_parameter_sets(file);
+    let _ = sovmr_mp4::hevc::parse_sps(file);
+    let _ = sovmr_mp4::mux::extract_sequence_header(file);
+}
+
+#[test]
+fn mutated_and_truncated_files_never_panic() {
+    let (seed, _, _) = synthetic_mp4();
+    let mut rng = Rng(0x5EED_CAFE_F00D_D00D);
+    for len in 0..=seed.len() {
+        exercise_mp4(&seed[..len]);
+    }
+    for _ in 0..20_000 {
+        let mut f = seed.clone();
+        for _ in 0..=rng.below(8) {
+            let i = rng.below(f.len());
+            f[i] = match rng.below(4) {
+                0 => 0x00,
+                1 => 0xFF,
+                2 => f[i] ^ (1 << rng.below(8)),
+                _ => rng.next() as u8,
+            };
+        }
+        let cut = f.len() - rng.below(f.len() / 4);
+        exercise_mp4(&f[..cut]);
+    }
+}
