@@ -1588,7 +1588,9 @@ fn a_lossless_source_track_leaves_as_aac() {
     );
     let bytes = std::fs::read(&raw).expect("decoded audio");
     let peak = |data: &[u8]| {
-        data.chunks_exact(4)
+        data.as_chunks::<4>()
+            .0
+            .iter()
             .map(|c| f32::from_le_bytes([c[0], c[1], c[2], c[3]]).abs())
             .fold(0.0f32, f32::max)
     };

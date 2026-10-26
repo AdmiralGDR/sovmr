@@ -227,8 +227,10 @@ fn decode(path: &Path) -> (Vec<f64>, String) {
     let complaints = String::from_utf8_lossy(&out.stderr).to_string();
     let bytes = std::fs::read(&raw).unwrap_or_default();
     let samples = bytes
-        .chunks_exact(4)
-        .map(|c| f64::from(f32::from_le_bytes([c[0], c[1], c[2], c[3]])))
+        .as_chunks::<4>()
+        .0
+        .iter()
+        .map(|c| f64::from(f32::from_le_bytes(*c)))
         .collect();
     (samples, complaints)
 }
@@ -1587,8 +1589,10 @@ fn aac_probe(name: &str, source: &str, rate: u32, extra: &[&str]) -> (Vec<u8>, V
     let bytes = std::fs::read(&coded).expect("coded probe");
     let samples: Vec<f64> = std::fs::read(&raw)
         .expect("decoded probe")
-        .chunks_exact(8)
-        .map(|c| f64::from_le_bytes(c.try_into().unwrap()))
+        .as_chunks::<8>()
+        .0
+        .iter()
+        .map(|c| f64::from_le_bytes(*c))
         .collect();
     (bytes, samples)
 }

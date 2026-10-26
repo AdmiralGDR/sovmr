@@ -793,7 +793,7 @@ pub fn survey_extras(file: &[u8]) -> Result<Extras, DemuxError> {
         };
         extras.chapters = true;
         // The payload is a bare list of referenced track IDs.
-        for id in chap.chunks_exact(4).take(MAX_SURVEYED_TRACKS) {
+        for id in chap.as_chunks::<4>().0.iter().take(MAX_SURVEYED_TRACKS) {
             chapter_tracks.push(u32::from_be_bytes([id[0], id[1], id[2], id[3]]));
         }
     }

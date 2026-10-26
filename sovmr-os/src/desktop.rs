@@ -919,8 +919,10 @@ mod notifier_tests {
         notifier::put_wide(&mut buffer, 0, 8, "a very long title indeed");
         // Seven characters plus the terminator, and nothing beyond.
         let units: Vec<u16> = buffer[..16]
-            .chunks_exact(2)
-            .map(|c| u16::from_le_bytes([c[0], c[1]]))
+            .as_chunks::<2>()
+            .0
+            .iter()
+            .map(|c| u16::from_le_bytes(*c))
             .collect();
         assert_eq!(units[7], 0, "the field must end in a terminator");
         assert!(buffer[16..].iter().all(|b| *b == 0), "wrote past the field");
