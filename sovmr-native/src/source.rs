@@ -627,7 +627,7 @@ mod tests {
 
 /// Which container the output should be written in.
 ///
-/// The user asked for the output to mirror the input, so this is not a
+/// The output always mirrors the input container, so this is not a
 /// setting: a Matroska source produces Matroska, an MP4 source produces
 /// MP4. Re-containerising silently is the kind of helpfulness that loses
 /// somebody their subtitles.

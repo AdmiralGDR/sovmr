@@ -504,7 +504,7 @@ mod tests {
         }
     }
 
-    /// The user's actual regression: 1080p30 H.264 at 5.2 Mbit/s.
+    /// Real-world regression case: 1080p30 H.264 at 5.2 Mbit/s.
     fn lean_1080p() -> MediaInfo {
         info(1920, 1080, 100, 65_000_000, 30.0, "h264")
     }

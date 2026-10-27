@@ -63,7 +63,7 @@ mod win32;
 // before anything is written.
 include!(concat!(env!("OUT_DIR"), "/payload.rs"));
 
-/// What the user asked for.
+/// Operation selected on the command line.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum Mode {
     /// Install, upgrading in place if an installation already exists.

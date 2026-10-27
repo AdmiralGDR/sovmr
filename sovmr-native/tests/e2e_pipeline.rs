@@ -804,7 +804,7 @@ const RICH_CUES: [(&str, &str, &str); 2] = [
     ("00:00:04,000", "00:00:06,000", "World"),
 ];
 
-/// A fixture carrying everything the user asked to preserve: video,
+/// A fixture carrying every stream type that must be preserved: video,
 /// audio, a subtitle track, chapters and tags.
 fn make_rich_fixture(dir: &std::path::Path) -> std::path::PathBuf {
     let srt = dir.join("cues.srt");
@@ -877,7 +877,7 @@ fn make_rich_fixture(dir: &std::path::Path) -> std::path::PathBuf {
 #[test]
 #[ignore = "requires NVIDIA GPU + driver (subtitles/chapters degradation notice)"]
 fn what_the_output_cannot_carry_is_named_instead_of_vanishing() {
-    // The user asked to preserve the maximum a source carries. The MP4
+    // The goal is to preserve as much of the source as possible. The MP4
     // output path cannot re-emit subtitles, chapters or tags yet, and
     // the honest interim behaviour is to say so — the same contract the
     // unsupported-audio path already honours. A limitation the user is
