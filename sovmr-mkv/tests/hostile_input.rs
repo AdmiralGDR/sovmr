@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0-or-later
+// SPDX-License-Identifier: GPL-3.0-or-later
 //! Hostile-input gate for the Matroska reader: a file this crate wrote is
 //! truncated at every length and randomly mutated thousands of times, and
 //! every public entry point a hostile file can reach must return (with or

@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: AGPL-3.0-or-later
+# SPDX-License-Identifier: GPL-3.0-or-later
 # Template: `make install` / `make package` replace @BINDIR@ and copy this
 # into ~/.local/share/applications/ (or the AppDir root).
 [Desktop Entry]

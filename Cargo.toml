@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: AGPL-3.0-or-later
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # sovmr workspace — sovereign media re-encoder.
 #
@@ -34,8 +34,8 @@ members = [
 version = "2.0.0-rc.38"
 edition = "2021"
 rust-version = "1.92"
-license = "AGPL-3.0-or-later"
-authors = ["sovmr contributors"]
+license = "GPL-3.0-or-later"
+authors = ["AdmiralGDR"]
 keywords = ["video", "av1", "hevc", "nvenc", "transcoding"]
 categories = ["multimedia::video", "hardware-support"]
 

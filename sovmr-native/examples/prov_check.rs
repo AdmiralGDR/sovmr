@@ -1,6 +1,6 @@
-// SPDX-License-Identifier: AGPL-3.0-or-later
-// sovmr — provider facade smoke example (Copyright (C) 2026 sovmr contributors,
-// GNU AGPL v3-or-later; see <https://www.gnu.org/licenses/>).
+// SPDX-License-Identifier: GPL-3.0-or-later
+// sovmr — provider facade smoke example (Copyright (C) 2026 AdmiralGDR,
+// GNU GPL v3-or-later; see <https://www.gnu.org/licenses/>).
 // quick provider-facade smoke via the real core scheduler
 use std::sync::Arc;
 fn main() {

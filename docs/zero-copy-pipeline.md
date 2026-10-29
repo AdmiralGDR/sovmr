@@ -1,4 +1,4 @@
-<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
 # The zero-copy VRAM pipeline (Phase 2 target architecture)
 
 *Русская версия: [zero-copy-pipeline.ru.md](zero-copy-pipeline.ru.md).*

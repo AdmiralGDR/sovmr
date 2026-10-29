@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0-or-later
+// SPDX-License-Identifier: GPL-3.0-or-later
 //
 // Matroska input the way sovmr-native opens it: segment, audio plan,
 // clusters, then every video frame converted to Annex B.

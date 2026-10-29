@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: AGPL-3.0-or-later
+# SPDX-License-Identifier: GPL-3.0-or-later
 # sovmr — build & launch convenience. `make` (or `make run`) is all you need.
 
 CARGO      ?= cargo

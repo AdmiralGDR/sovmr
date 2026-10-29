@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: AGPL-3.0-or-later
+# SPDX-License-Identifier: GPL-3.0-or-later
 [package]
 name = "sovmr-native"
 description = "The zero-copy sovereign engine: demux -> NVDEC -> VRAM -> NVENC -> fast-start MP4, wrapped as an EncoderProvider"

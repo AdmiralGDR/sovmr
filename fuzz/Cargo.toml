@@ -1,10 +1,10 @@
-# SPDX-License-Identifier: AGPL-3.0-or-later
+# SPDX-License-Identifier: GPL-3.0-or-later
 [package]
 name = "sovmr-fuzz"
 version = "0.0.0"
 publish = false
 edition = "2021"
-license = "AGPL-3.0-or-later"
+license = "GPL-3.0-or-later"
 
 [package.metadata]
 cargo-fuzz = true

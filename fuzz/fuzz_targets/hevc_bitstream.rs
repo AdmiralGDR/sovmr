@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0-or-later
+// SPDX-License-Identifier: GPL-3.0-or-later
 //
 // HEVC Annex B helpers and the colr reader. The pipeline runs
 // extract_parameter_sets on every encoded packet, and parse_sps on

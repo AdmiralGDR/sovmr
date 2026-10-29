@@ -11,8 +11,10 @@ powered by a fully sovereign zero-copy NVDEC→NVENC pipeline on RTX GPUs
 (**no FFmpeg anywhere**), with a queue that survives pauses, protects you
 from generation loss, and never leaves half-written files behind.
 
-Licensed **AGPL-3.0-or-later**. Built with zero third-party dependencies
-apart from one sanctioned exception (`egui` for the GUI).
+Licensed **GPL-3.0-or-later** (see `LICENSE`). Copies published before this
+change, up to and including v2.0.0-rc.38, remain under AGPL-3.0-or-later.
+Built with zero third-party dependencies apart from one sanctioned exception
+(`egui` for the GUI).
 
 ## Quick start
 

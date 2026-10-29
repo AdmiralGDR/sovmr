@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: AGPL-3.0-or-later
+# SPDX-License-Identifier: GPL-3.0-or-later
 [package]
 name = "sovmr-nvenc"
 description = "Sovereign NVENC bridge (dlopen libnvidia-encode.so.1): sessions, AV1/HEVC encode, VRAM resource registration, bitstream locking — zero crates"

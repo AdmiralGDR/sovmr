@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0-or-later
+// SPDX-License-Identifier: GPL-3.0-or-later
 //
 // ISOBMFF input the way sovmr-native opens it: video track, audio
 // tracks, extras, then every sample read and converted to Annex B.

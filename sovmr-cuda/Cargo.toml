@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: AGPL-3.0-or-later
+# SPDX-License-Identifier: GPL-3.0-or-later
 [package]
 name = "sovmr-cuda"
 description = "Minimal sovereign CUDA Driver API bridge (dlopen libcuda.so.1): init, device, RAII context — just enough to host NVENC sessions"

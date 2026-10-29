@@ -1,4 +1,4 @@
-<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
 <!-- Русская версия. English: [zero-copy-pipeline.md](zero-copy-pipeline.md). -->
 # Конвейер zero-copy через VRAM (целевая архитектура фазы 2)
 

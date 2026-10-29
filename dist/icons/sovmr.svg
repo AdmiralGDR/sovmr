@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- SPDX-License-Identifier: AGPL-3.0-or-later
+<!-- SPDX-License-Identifier: GPL-3.0-or-later
      sovmr icon: charcoal tile, cyan+orange chevrons compressing inward. -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
   <rect width="128" height="128" rx="24" fill="#1b1b21"/>
