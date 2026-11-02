@@ -82,3 +82,10 @@ jobs:
       - run: cargo test --locked -p sovmr-mkv --test real_file -- --ignored
       - run: cargo test --locked -p sovmr-mkv --test write_read -- --ignored
       - run: cargo test --locked -p sovmr-audio --test bit_exact -- --ignored
+      # The three AAC sound gates from the oracle suite. They take about
+      # twenty seconds, unlike the codebook and band-table walks.
+      - run: >-
+          cargo test --locked -p sovmr-audio --test oracle -- --ignored --exact
+          our_decoder_arrives_at_the_same_sound_as_the_decoder_it_was_measured_from
+          the_census_says_which_parts_of_aac_real_files_still_need
+          noise_bands_carry_the_energy_the_bitstream_stated

@@ -1753,6 +1753,7 @@ fn agreement_on(
 }
 
 #[test]
+#[ignore = "needs ffmpeg to answer"]
 fn our_decoder_arrives_at_the_same_sound_as_the_decoder_it_was_measured_from() {
     // The gate the whole AAC effort exists for. Nothing here came from
     // us: ffmpeg chose the codebooks, the scalefactors and the sections,
@@ -1868,6 +1869,7 @@ fn frames_that_are_not_one_long_window() -> usize {
 }
 
 #[test]
+#[ignore = "needs ffmpeg to answer"]
 fn the_census_says_which_parts_of_aac_real_files_still_need() {
     // Which elements matter is not a question for the specification's
     // table of contents. It is a question for the files that exist, and
@@ -2263,6 +2265,7 @@ fn coefficient_energy_to_output_power(dir: &Path) -> (f64, f64) {
 }
 
 #[test]
+#[ignore = "needs ffmpeg to answer"]
 fn noise_bands_carry_the_energy_the_bitstream_stated() {
     // Perceptual noise substitution says what a band's energy is and
     // nothing about its contents. Two correct decoders therefore
