@@ -103,7 +103,12 @@ sha256sums:
 		exit 1; \
 	fi; \
 	mkdir -p dist; \
-	sha256sum $$present | tee dist/SHA256SUMS
+	: > dist/SHA256SUMS; \
+	for f in $$present; do \
+		h=$$(sha256sum "$$f" | awk '{print $$1}'); \
+		printf '%s  %s\n' "$$h" "$$(basename "$$f")" >> dist/SHA256SUMS; \
+	done; \
+	cat dist/SHA256SUMS
 
 ## Real-GPU end-to-end encode test (needs NVDEC+NVENC; ffmpeg is used
 ## only to generate the input fixture).

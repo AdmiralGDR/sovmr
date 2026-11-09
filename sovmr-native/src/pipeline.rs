@@ -1107,10 +1107,8 @@ pub fn transcode(
             demux::MAX_AUDIO_TRACKS
         ));
     }
-    // Subtitles, chapters and tags are not re-emitted into MP4 yet. The
-    // user asked to keep the maximum of what a source carries, so the
-    // honest interim answer is to name what is being left behind rather
-    // than let it disappear quietly.
+    // Subtitles, chapters and tags are not re-emitted into MP4 yet.
+    // Name what is being left behind rather than let it disappear quietly.
     if let Some(lost) = source.extras_description(&file) {
         degradations.push(format!("not carried into MP4 output: {lost}"));
     }

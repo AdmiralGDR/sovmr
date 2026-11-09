@@ -687,8 +687,8 @@ const HANDLER_SUBTITLE: [[u8; 4]; 3] = [*b"subt", *b"sbtl", *b"text"];
 /// ceiling. Generous enough that no real file reaches it.
 const MAX_SURVEYED_TRACKS: usize = 256;
 
-/// What a source carries besides its video and audio — the material the
-/// user asked to keep and the engine cannot yet re-emit into MP4.
+/// What a source carries besides its video and audio — material that
+/// the engine cannot yet re-emit into MP4.
 ///
 /// This type exists to make a silent loss loud. Subtitles, chapters and
 /// tags are dropped by the MP4 output path today; saying so is the
